@@ -50,7 +50,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
       - ENVIRONMENT=${ENVIRONMENT:-development}
     ports:
-      - "8080:8080"
+      - "8080:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -102,21 +102,22 @@ services:
 
   # Frontend
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      target: development
-    container_name: salespilot-frontend
-    restart: unless-stopped
-    environment:
-      - VITE_API_URL=http://localhost:8000/api/v1
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
+  build:
+    context: ./frontend
+    dockerfile: Dockerfile
+    target: development
+  container_name: salespilot-frontend
+  restart: unless-stopped
+  environment:
+    - VITE_API_URL=http://31.222.235.197:8080/api/v1
+  ports:
+    - "3000:3000"
+  volumes:
+    - ./frontend:/app
+    - /app/node_modules
+  depends_on:
+    - backend
+  command: npm run dev -- --host 0.0.0.0
 
   # Flower (Celery Monitoring) - Optional
   flower:
