@@ -27,6 +27,7 @@ import SettingsPage from '@/pages/settings/SettingsPage';
 import AccountsPage from '@/pages/settings/AccountsPage';
 import TeamPage from '@/pages/settings/TeamPage';
 import IntegrationsPage from '@/pages/settings/IntegrationsPage';
+import ApiSettingsPage from '@/pages/settings/ApiSettingsPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -87,6 +88,7 @@ export default function App() {
                 <Route path="/settings/accounts" element={<AccountsPage />} />
                 <Route path="/settings/team" element={<TeamPage />} />
                 <Route path="/settings/integrations" element={<IntegrationsPage />} />
+                <Route path="/settings/api" element={<ApiSettingsPage />} />
               </Route>
 
               {/* 404 */}

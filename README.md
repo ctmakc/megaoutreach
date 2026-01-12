@@ -1,213 +1,345 @@
-# Outreach AI
+# MegaOutreach - Personal B2B Outreach Platform
 
-AI-powered multi-channel outreach automation platform with email and LinkedIn integration.
+> Personalized email and LinkedIn outreach with AI-powered personalization
 
-## Features
+**Not a mass mailing tool** - MegaOutreach helps sales teams send authentic, one-on-one messages that feel personal, not automated.
 
-- Multi-channel outreach (Email + LinkedIn)
-- AI-powered response generation
-- Smart email warmup
-- Campaign automation with conditions
-- Contact enrichment
-- Real-time analytics
-- Queue-based processing with BullMQ
-- Docker deployment ready
-
-## Tech Stack
-
-### Backend
-- Node.js + TypeScript
-- Express.js
-- BullMQ (job queue)
-- PostgreSQL (database)
-- Redis (cache + queue)
-- Puppeteer (LinkedIn automation)
-
-### Frontend
-- React + TypeScript
-- Vite
-- React Router
-
-### Infrastructure
-- Docker + Docker Compose
-- GitHub Actions (CI/CD)
-- Nginx
-
-## Project Structure
-
-```
-outreach-ai/
-├── backend/              # Backend API and services
-│   ├── src/
-│   │   ├── api/         # API routes and middleware
-│   │   ├── services/    # Business logic services
-│   │   ├── db/          # Database schema and migrations
-│   │   ├── queue/       # Queue workers and jobs
-│   │   └── utils/       # Utility functions
-├── frontend/            # React frontend
-│   └── src/
-│       ├── components/  # React components
-│       ├── pages/       # Page components
-│       ├── hooks/       # Custom React hooks
-│       └── api/         # API client
-├── docker/              # Docker configurations
-└── .github/             # CI/CD workflows
-```
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js 18+
-- Docker & Docker Compose
-- PostgreSQL 15+
-- Redis 7+
+- Docker & Docker Compose (recommended)
+- OR Node.js 20+ and PostgreSQL 15+ for local development
 
-### Installation
+### 1. Clone and Setup
 
-1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone <your-repo-url>
 cd megaoutreach
-```
 
-2. Copy environment variables:
-```bash
+# Copy environment file
 cp .env.example .env
+
+# Edit .env with your credentials
+# Minimum required: DATABASE_URL, JWT_SECRET, ENCRYPTION_KEY, GOOGLE_CLIENT_ID/SECRET
 ```
 
-3. Configure your `.env` file with required API keys and credentials.
-
-### Development
-
-#### Using Docker Compose (Recommended)
+### 2. Start with Docker
 
 ```bash
-docker-compose up
+# Start all services (PostgreSQL, Redis, Backend, Frontend)
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop services
+docker compose down
 ```
 
-This will start:
-- Backend API on http://localhost:3000
-- Frontend on http://localhost:80
-- PostgreSQL on localhost:5432
-- Redis on localhost:6379
+### 3. Access Application
 
-#### Manual Setup
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:4000
+- **API Docs**: http://localhost:4000/docs (when available)
+- **PostgreSQL**: localhost:5432
+- **Redis**: localhost:6379
 
-1. Install dependencies:
+## 📝 Environment Setup
+
+### Required Variables
+
+```env
+# Database
+DATABASE_URL=postgresql://megaoutreach:password@localhost:5432/megaoutreach
+
+# Security
+JWT_SECRET=your-secret-min-32-characters
+ENCRYPTION_KEY=your-32-character-encryption-key
+
+# Google OAuth (for authentication)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:4000/api/auth/google/callback
+
+# Application
+BACKEND_URL=http://localhost:4000
+```
+
+### Optional Variables (Configure via Settings UI)
+
+All API keys can be added through **Settings > API** in the web interface:
+
+- OpenAI API Key (AI content generation)
+- Anthropic Claude API Key (alternative AI)
+- Hunter.io API Key (email finding)
+- Clearbit API Key (contact enrichment)
+
+## 🏗️ Project Structure
+
+```
+megaoutreach/
+├── backend/              # Node.js/Fastify API
+│   ├── src/
+│   │   ├── api/         # Routes & middleware
+│   │   │   ├── routes/  # API endpoints
+│   │   │   └── middleware/ # Auth, rate limiting
+│   │   ├── db/          # Database
+│   │   │   ├── schema.ts   # Drizzle ORM schema
+│   │   │   └── migrations/ # SQL migrations
+│   │   ├── services/    # Business logic
+│   │   │   ├── email/   # Email sending & tracking
+│   │   │   ├── linkedin/ # LinkedIn automation
+│   │   │   ├── ai/      # AI content generation
+│   │   │   └── campaign/ # Campaign engine
+│   │   └── utils/       # Utilities
+│   └── package.json
+│
+├── frontend/            # React/Vite SPA
+│   ├── src/
+│   │   ├── components/ # Reusable components
+│   │   ├── pages/      # Page components
+│   │   │   ├── auth/   # Login, register
+│   │   │   ├── settings/ # Settings pages
+│   │   │   └── ...     # Other pages
+│   │   ├── contexts/   # React contexts
+│   │   ├── lib/        # API client
+│   │   └── main.tsx    # Entry point
+│   └── package.json
+│
+├── docker/             # Dockerfiles
+├── nginx/              # Nginx config
+├── .env.example        # Environment template
+└── docker-compose.yml  # Dev environment
+```
+
+## 🔑 Key Features
+
+### ✅ Fully Implemented
+
+- **Personal Outreach Sequences** - Multi-step follow-ups (not mass campaigns)
+- **Email Account Management** - SMTP/IMAP with warmup support
+- **LinkedIn Automation** - Playwright-based with stealth mode
+- **AI Content Generation** - OpenAI & Anthropic Claude integration
+- **Email Tracking** - Opens, clicks, replies tracking
+- **Contact Management** - Import, enrich, segment contacts
+- **Team Collaboration** - Role-based access (Owner, Admin, Manager, Member)
+- **Template System** - Reusable templates with variables
+- **Analytics Dashboard** - Real-time outreach metrics
+- **Integrations** - CRM, enrichment, AI services
+- **Dark Mode** - Full dark/light theme support
+
+### 🎯 Philosophy
+
+MegaOutreach is designed for **quality over quantity**:
+- Every message should feel personal
+- No "batch sending" or "blasting"
+- AI assists personalization, not automation
+- 1-to-1 relationships, not broadcasts
+
+See [TERMINOLOGY.md](./TERMINOLOGY.md) for our naming conventions.
+
+## 🛠️ Development
+
+### Backend Development
+
 ```bash
-# Backend
 cd backend
 npm install
 
-# Frontend
-cd ../frontend
-npm install
-```
-
-2. Start services:
-```bash
-# Terminal 1 - Backend
-cd backend
+# Development mode
 npm run dev
 
-# Terminal 2 - Worker
-cd backend
-npm run worker:dev
+# Build for production
+npm run build
 
-# Terminal 3 - Frontend
+# Run migrations
+npm run migrate
+```
+
+### Frontend Development
+
+```bash
 cd frontend
+npm install
+
+# Development mode (with HMR)
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+### Database Migrations
+
+```bash
+cd backend
+
+# Run all pending migrations
+npm run migrate
+
+# Create new migration
+npm run migrate:create -- -m "add_new_field"
+
+# Rollback last migration
+npm run migrate:rollback
+```
+
+## 🎨 Settings Pages
+
+All credentials are configured through the web UI (no manual .env editing):
+
+### Settings > API
+Configure API keys for:
+- OpenAI (AI content generation)
+- Anthropic Claude (alternative AI)
+- Hunter.io (email finding)
+- Clearbit (contact enrichment)
+- Google OAuth (authentication)
+
+### Settings > Accounts
+- Add email accounts (SMTP/IMAP)
+- Connect LinkedIn accounts
+- View account status and limits
+- Monitor delivery rates
+
+### Settings > Team
+- Invite team members
+- Manage roles and permissions
+- View team activity
+
+### Settings > Integrations
+- Connect CRMs (HubSpot, Salesforce)
+- Enable enrichment services
+- Set up analytics tracking
+- Connect Zapier/Make
+
+## 📚 Documentation
+
+- **[SETUP-COMPLETE.md](./SETUP-COMPLETE.md)** - Detailed setup guide
+- **[TERMINOLOGY.md](./TERMINOLOGY.md)** - Naming conventions for personal outreach
+- **API Docs** - Available at `/docs` when backend is running
+
+## 🔐 Security
+
+- All sensitive data encrypted at rest using AES-256
+- JWT authentication with refresh tokens
+- Rate limiting on all API endpoints
+- CORS configured for production
+- SQL injection protection via Drizzle ORM
+- XSS protection with sanitization
+
+**Important**: Always change default secrets in production!
+
+## 🚢 Deployment
+
+### Production Build
+
+```bash
+# Build and start production services
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
+
+# View production logs
+docker compose -f docker-compose.prod.yml logs -f
+```
+
+### Production Checklist
+
+- [ ] Set strong JWT_SECRET (min 32 chars)
+- [ ] Set strong ENCRYPTION_KEY (exactly 32 chars)
+- [ ] Configure real DATABASE_URL
+- [ ] Set BACKEND_URL to production domain
+- [ ] Configure Google OAuth with production redirect URI
+- [ ] Add API keys via Settings UI
+- [ ] Set up HTTPS/SSL certificate
+- [ ] Configure firewall rules
+- [ ] Enable database backups
+- [ ] Set up monitoring and alerts
+
+## 🐛 Troubleshooting
+
+### Port Already in Use
+
+```bash
+# Check what's using the port
+# On Windows:
+netstat -ano | findstr :4000
+
+# On Linux/Mac:
+lsof -i :4000
+
+# Change port in .env if needed
+PORT=5000
+```
+
+### Database Connection Issues
+
+```bash
+# Check if PostgreSQL container is running
+docker compose ps
+
+# View database logs
+docker compose logs postgres
+
+# Connect to database manually
+docker compose exec postgres psql -U megaoutreach -d megaoutreach
+```
+
+### Playwright Browser Issues
+
+LinkedIn automation requires Playwright browsers:
+
+```bash
+cd backend
+npx playwright install chromium
+```
+
+### Frontend Build Errors
+
+```bash
+cd frontend
+
+# Clear node_modules and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Clear Vite cache
+rm -rf .vite
 npm run dev
 ```
 
-## Environment Variables
+## 📊 Tech Stack
 
-See [.env.example](.env.example) for all required environment variables.
+### Backend
+- **Fastify** - Fast, low-overhead web framework
+- **Drizzle ORM** - Type-safe SQL ORM
+- **PostgreSQL 15** - Relational database
+- **Redis 7** - Caching and job queues
+- **BullMQ** - Background job processing
+- **Playwright** - LinkedIn browser automation
+- **Nodemailer** - SMTP email sending
+- **OpenAI/Anthropic** - AI content generation
 
-Key variables:
-- `DATABASE_URL` - PostgreSQL connection string
-- `REDIS_HOST` - Redis host
-- `JWT_SECRET` - Secret for JWT authentication
-- `OPENAI_API_KEY` - OpenAI API key for AI features
-- `HUNTER_API_KEY` - Hunter.io API key for email enrichment
+### Frontend
+- **React 18** - UI library
+- **Vite** - Lightning-fast build tool
+- **TailwindCSS** - Utility-first CSS
+- **React Query** - Server state management
+- **React Router** - Client-side routing
+- **Lucide Icons** - Beautiful icon set
+- **React Hook Form** - Form management
+- **Zod** - Schema validation
 
-## API Documentation
+### Infrastructure
+- **Docker** - Containerization
+- **Nginx** - Reverse proxy (production)
+- **GitHub Actions** - CI/CD
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user
-
-### Campaigns
-- `GET /api/campaigns` - List all campaigns
-- `POST /api/campaigns` - Create campaign
-- `GET /api/campaigns/:id` - Get campaign details
-- `PUT /api/campaigns/:id` - Update campaign
-- `DELETE /api/campaigns/:id` - Delete campaign
-- `POST /api/campaigns/:id/start` - Start campaign
-- `POST /api/campaigns/:id/pause` - Pause campaign
-
-### Contacts
-- `GET /api/contacts` - List contacts
-- `POST /api/contacts` - Create contact
-- `POST /api/contacts/import` - Import contacts from CSV
-
-### Email
-- `POST /api/email/send` - Send email
-- `GET /api/email/inbox` - Get inbox messages
-- `POST /api/email/accounts` - Add email account
-
-### LinkedIn
-- `POST /api/linkedin/connect` - Send connection request
-- `POST /api/linkedin/message` - Send LinkedIn message
-- `GET /api/linkedin/profile/:username` - Get LinkedIn profile
-
-### Analytics
-- `GET /api/analytics/campaigns/:id` - Campaign analytics
-- `GET /api/analytics/dashboard` - Dashboard overview
-
-## Deployment
-
-### Production Deployment with Docker
-
-1. Build and push images:
-```bash
-docker-compose -f docker-compose.prod.yml build
-docker-compose -f docker-compose.prod.yml push
-```
-
-2. On production server:
-```bash
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-### Automated Deployment
-
-The project includes GitHub Actions workflow for automatic deployment on push to main branch.
-
-Configure these secrets in your GitHub repository:
-- `DOCKER_USERNAME`
-- `DOCKER_PASSWORD`
-- `SERVER_HOST`
-- `SERVER_USERNAME`
-- `SERVER_SSH_KEY`
-
-## Development Roadmap
-
-- [ ] Complete authentication system with JWT
-- [ ] Implement email sending with SMTP
-- [ ] Build LinkedIn automation with Puppeteer
-- [ ] Add AI response generation
-- [ ] Create campaign execution engine
-- [ ] Implement email warmup strategy
-- [ ] Add contact enrichment services
-- [ ] Build analytics dashboard
-- [ ] Create frontend UI components
-- [ ] Add webhook support for real-time updates
-- [ ] Implement A/B testing for campaigns
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -215,10 +347,16 @@ Configure these secrets in your GitHub repository:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## License
+## 📄 License
 
 MIT License - see LICENSE file for details
 
-## Support
+## 🆘 Support
 
-For questions and support, please open an issue in the GitHub repository.
+- **Issues**: Open an issue on GitHub
+- **Documentation**: Check [SETUP-COMPLETE.md](./SETUP-COMPLETE.md)
+- **Terminology**: See [TERMINOLOGY.md](./TERMINOLOGY.md)
+
+---
+
+**Made with ❤️ for B2B sales teams who value authentic relationships over mass marketing**

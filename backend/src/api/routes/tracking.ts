@@ -174,14 +174,14 @@ const trackingRoutes: FastifyPluginAsync = async (app) => {
       logger.error({ error, trackingId }, 'Error processing unsubscribe');
     }
 
-    // Show unsubscribe confirmation page
+    // Show opt-out confirmation page
     const html = `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Отписка</title>
+        <title>Email Preferences Updated</title>
         <style>
           body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -208,8 +208,8 @@ const trackingRoutes: FastifyPluginAsync = async (app) => {
       <body>
         <div class="container">
           <div class="icon">✓</div>
-          <h1>Вы отписаны</h1>
-          <p>Вы больше не будете получать письма от нас. Это изменение вступит в силу немедленно.</p>
+          <h1>Preferences Updated</h1>
+          <p>You won't receive any more emails from this sender. If you have any questions, feel free to reply to the original email.</p>
         </div>
       </body>
       </html>

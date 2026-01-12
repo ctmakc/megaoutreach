@@ -11,13 +11,15 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+    host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: 'http://localhost:4000',
+        target: process.env.VITE_API_URL || 'http://31.222.235.197:8080',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '/api'),
       },
       '/ws': {
-        target: 'ws://localhost:4000',
+        target: process.env.VITE_WS_URL || 'ws://31.222.235.197:8080',
         ws: true,
       },
     },

@@ -59,7 +59,7 @@ api.interceptors.response.use(
     }
 
     // Handle other errors
-    const errorMessage = (error.response?.data as any)?.message || 'Произошла ошибка';
+    const errorMessage = (error.response?.data as any)?.message || 'An error occurred';
 
     if (error.response?.status !== 401) {
       toast.error(errorMessage);

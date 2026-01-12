@@ -16,34 +16,34 @@ export default function AuthLayout() {
 
           <div className="space-y-6">
             <h1 className="text-4xl font-bold leading-tight">
-              Автоматизируйте B2B outreach и увеличьте продажи
+              Personalized B2B outreach that gets responses
             </h1>
             <p className="text-lg text-primary-100">
-              Email-кампании, LinkedIn автоматизация, AI-генерация контента — всё в одном месте.
+              Send authentic, one-on-one emails and LinkedIn messages with AI-powered personalization.
             </p>
 
             <div className="grid grid-cols-2 gap-4 pt-8">
               <div className="rounded-lg bg-white/10 p-4">
-                <div className="text-3xl font-bold">300%</div>
-                <div className="text-sm text-primary-200">Рост ответов</div>
+                <div className="text-3xl font-bold">3x</div>
+                <div className="text-sm text-primary-200">More Replies</div>
               </div>
               <div className="rounded-lg bg-white/10 p-4">
-                <div className="text-3xl font-bold">5x</div>
-                <div className="text-sm text-primary-200">Экономия времени</div>
+                <div className="text-3xl font-bold">10h</div>
+                <div className="text-sm text-primary-200">Saved Weekly</div>
               </div>
               <div className="rounded-lg bg-white/10 p-4">
-                <div className="text-3xl font-bold">10k+</div>
-                <div className="text-sm text-primary-200">Активных пользователей</div>
+                <div className="text-3xl font-bold">98%</div>
+                <div className="text-sm text-primary-200">Delivery Rate</div>
               </div>
               <div className="rounded-lg bg-white/10 p-4">
                 <div className="text-3xl font-bold">AI</div>
-                <div className="text-sm text-primary-200">Персонализация</div>
+                <div className="text-sm text-primary-200">Personalization</div>
               </div>
             </div>
           </div>
 
           <div className="text-sm text-primary-200">
-            © 2025 OutreachPro. Все права защищены.
+            © 2025 MegaOutreach. All rights reserved.
           </div>
         </div>
       </div>

@@ -8,10 +8,10 @@ import { ArrowLeft, Eye, EyeOff, Loader2, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const resetPasswordSchema = z.object({
-  password: z.string().min(8, 'Минимум 8 символов'),
+  password: z.string().min(8, 'Minimum 8 characters'),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: 'Пароли не совпадают',
+  message: 'Passwords do not match',
   path: ['confirmPassword'],
 });
 
@@ -36,7 +36,7 @@ export default function ResetPasswordPage() {
 
   const onSubmit = async (data: ResetPasswordForm) => {
     if (!token) {
-      toast.error('Недействительная ссылка для сброса пароля');
+      toast.error('Invalid password reset link');
       return;
     }
 
@@ -49,7 +49,7 @@ export default function ResetPasswordPage() {
       setIsSuccess(true);
       setTimeout(() => navigate('/login'), 3000);
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Ошибка сброса пароля');
+      toast.error(error.response?.data?.message || 'Failed to reset password');
     } finally {
       setIsLoading(false);
     }
@@ -59,16 +59,16 @@ export default function ResetPasswordPage() {
     return (
       <div className="text-center">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Недействительная ссылка
+          Invalid Link
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Ссылка для сброса пароля недействительна или устарела.
+          This password reset link is invalid or has expired.
         </p>
         <Link
           to="/forgot-password"
           className="mt-6 inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-500"
         >
-          Запросить новую ссылку
+          Request a new link
         </Link>
       </div>
     );
@@ -81,10 +81,10 @@ export default function ResetPasswordPage() {
           <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
         </div>
         <h2 className="mt-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Пароль изменён
+          Password Changed
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Ваш пароль успешно изменён. Сейчас вы будете перенаправлены на страницу входа.
+          Your password has been successfully changed. You will be redirected to the login page.
         </p>
       </div>
     );
@@ -97,27 +97,27 @@ export default function ResetPasswordPage() {
         className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Назад к входу
+        Back to login
       </Link>
 
       <h2 className="mt-6 text-2xl font-bold text-gray-900 dark:text-gray-100">
-        Создайте новый пароль
+        Create new password
       </h2>
       <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-        Придумайте надёжный пароль для вашего аккаунта.
+        Choose a strong password for your account.
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
         <div>
           <label htmlFor="password" className="label">
-            Новый пароль
+            New Password
           </label>
           <div className="relative mt-1">
             <input
               {...register('password')}
               type={showPassword ? 'text' : 'password'}
               className="input pr-10"
-              placeholder="Минимум 8 символов"
+              placeholder="Minimum 8 characters"
             />
             <button
               type="button"
@@ -138,13 +138,13 @@ export default function ResetPasswordPage() {
 
         <div>
           <label htmlFor="confirmPassword" className="label">
-            Подтвердите пароль
+            Confirm Password
           </label>
           <input
             {...register('confirmPassword')}
             type={showPassword ? 'text' : 'password'}
             className="input mt-1"
-            placeholder="Повторите пароль"
+            placeholder="Repeat password"
           />
           {errors.confirmPassword && (
             <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
@@ -159,7 +159,7 @@ export default function ResetPasswordPage() {
           {isLoading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
-            'Сохранить новый пароль'
+            'Save new password'
           )}
         </button>
       </form>
