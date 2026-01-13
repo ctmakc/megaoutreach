@@ -104,7 +104,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
     const data = campaignSchema.parse(request.body);
     
     const [campaign] = await db.insert(campaigns).values({
-      ...data,
+      ...data as any,
       organizationId,
       createdById: userId,
     }).returning();
@@ -177,8 +177,8 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
     // Insert new steps
     if (steps.length > 0) {
       await db.insert(campaignSteps).values(
-        steps.map((step) => ({
-          ...step,
+        steps.map((step: any) => ({
+          ...step as any,
           campaignId: id,
         }))
       );
@@ -317,7 +317,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
       .where(eq(campaigns.id, id));
     
     // Schedule campaign processing
-    await addCampaignJob({ campaignId: id });
+    await addCampaignJob({ campaignId: id, action: 'process-step' });
     
     return { success: true, message: 'Campaign started' };
   });

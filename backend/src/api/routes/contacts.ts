@@ -73,7 +73,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
         where: whereConditions,
         limit,
         offset,
-        orderBy: sortOrder === 'desc' ? [desc(contacts[sortBy as keyof typeof contacts])] : undefined,
+        orderBy: sortOrder === 'desc' ? [desc(contacts[sortBy as any])] : undefined,
       }),
       db.select({ count: sql<number>`count(*)` })
         .from(contacts)

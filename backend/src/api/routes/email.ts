@@ -106,7 +106,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
     const encryptedImapPassword = data.imapPassword ? encrypt(data.imapPassword) : null;
     
     const [account] = await db.insert(emailAccounts).values({
-      ...data,
+      ...data as any,
       smtpPassword: encryptedSmtpPassword,
       imapPassword: encryptedImapPassword,
       organizationId,
@@ -202,7 +202,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
       secure: account.smtpSecure || false,
     });
     
-    let imapTest = { success: true, error: null };
+    let imapTest: { success: boolean; error?: string } = { success: true };
     if (account.imapHost && account.imapUser && account.imapPassword) {
       imapTest = await testImapConnection({
         host: account.imapHost,
