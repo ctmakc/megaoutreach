@@ -245,8 +245,8 @@ class LinkedInService {
   private async extractProfileInfo(page: Page): Promise<LoginResult> {
     try {
       // Get session cookies
-      const cookies = await page.context().cookies();
-      const cookies = JSON.stringify(cookies);
+      const cookiesData = await page.context().cookies();
+      const cookies = JSON.stringify(cookiesData);
 
       // Navigate to profile
       await page.goto('https://www.linkedin.com/in/me/', { waitUntil: 'networkidle' });

@@ -62,7 +62,7 @@ const webhooksRoutes: FastifyPluginAsync = async (app) => {
         if (message.contactId) {
           await db.update(contacts)
             .set({
-              status: 'complained',
+              status: 'unsubscribed',
               isUnsubscribed: true,
               unsubscribedAt: new Date(),
               updatedAt: new Date(),

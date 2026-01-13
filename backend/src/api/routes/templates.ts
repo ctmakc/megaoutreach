@@ -3,6 +3,7 @@ import { db } from '../../db/index.js';
 import { templates } from '../../db/schema.js';
 import { eq, and, desc } from 'drizzle-orm';
 import { z } from 'zod';
+import { authenticate } from '../middleware/auth.js';
 
 const templateSchema = z.object({
   name: z.string().min(1).max(255),
@@ -18,7 +19,7 @@ const templateSchema = z.object({
 const templateRoutes: FastifyPluginAsync = async (app) => {
   // List templates
   app.get('/', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { channel, category } = request.query as any;
@@ -43,7 +44,7 @@ const templateRoutes: FastifyPluginAsync = async (app) => {
 
   // Get single template
   app.get('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -64,7 +65,7 @@ const templateRoutes: FastifyPluginAsync = async (app) => {
 
   // Create template
   app.post('/', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { userId, organizationId } = request.user as any;
     const data = templateSchema.parse(request.body);
@@ -85,7 +86,7 @@ const templateRoutes: FastifyPluginAsync = async (app) => {
 
   // Update template
   app.patch('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -115,7 +116,7 @@ const templateRoutes: FastifyPluginAsync = async (app) => {
 
   // Delete template
   app.delete('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -131,7 +132,7 @@ const templateRoutes: FastifyPluginAsync = async (app) => {
 
   // Duplicate template
   app.post('/:id/duplicate', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { userId, organizationId } = request.user as any;
@@ -164,7 +165,7 @@ const templateRoutes: FastifyPluginAsync = async (app) => {
 
   // Preview template with variables
   app.post('/:id/preview', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
