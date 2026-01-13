@@ -16,7 +16,7 @@ interface BrowserSession {
 interface LoginResult {
   success: boolean;
   requiresVerification?: boolean;
-  sessionCookie?: string;
+  cookies?: string;
   profileUrl?: string;
   profileName?: string;
   error?: string;
@@ -85,8 +85,8 @@ class LinkedInService {
     });
 
     // Restore session cookie if exists
-    if (account?.sessionCookie) {
-      const cookies = JSON.parse(decrypt(account.sessionCookie));
+    if (account?.cookies) {
+      const cookies = JSON.parse(decrypt(account.cookies));
       await context.addCookies(cookies);
     }
 
@@ -246,7 +246,7 @@ class LinkedInService {
     try {
       // Get session cookies
       const cookies = await page.context().cookies();
-      const sessionCookie = JSON.stringify(cookies);
+      const cookies = JSON.stringify(cookies);
 
       // Navigate to profile
       await page.goto('https://www.linkedin.com/in/me/', { waitUntil: 'networkidle' });
@@ -260,14 +260,14 @@ class LinkedInService {
 
       return {
         success: true,
-        sessionCookie,
+        cookies,
         profileUrl,
         profileName,
       };
     } catch (error: any) {
       return {
         success: true,
-        sessionCookie: JSON.stringify(await page.context().cookies()),
+        cookies: JSON.stringify(await page.context().cookies()),
       };
     }
   }
@@ -361,7 +361,7 @@ class LinkedInService {
         // Update daily count
         await db.update(linkedinAccounts)
           .set({
-            connectionsToday: sql`${linkedinAccounts.connectionsToday} + 1`,
+            connectionsSentToday: sql`${linkedinAccounts.connectionsSentToday} + 1`,
             updatedAt: new Date(),
           })
           .where(eq(linkedinAccounts.id, accountId));
@@ -458,7 +458,7 @@ class LinkedInService {
         // Update daily count
         await db.update(linkedinAccounts)
           .set({
-            messagesToday: sql`${linkedinAccounts.messagesToday} + 1`,
+            messagesSentToday: sql`${linkedinAccounts.messagesSentToday} + 1`,
             updatedAt: new Date(),
           })
           .where(eq(linkedinAccounts.id, accountId));
