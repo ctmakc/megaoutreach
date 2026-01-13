@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { db } from '../../db/index.js';
 import { contacts } from '../../db/schema.js';
 import { eq, and, desc, like, or, sql } from 'drizzle-orm';
+import { authenticate } from '../middleware/auth.js';
 import { z } from 'zod';
 import { parse } from 'csv-parse/sync';
 
@@ -28,7 +29,7 @@ const contactSchema = z.object({
 const contactRoutes: FastifyPluginAsync = async (app) => {
   // List contacts
   app.get('/', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const {
@@ -92,7 +93,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
 
   // Get single contact
   app.get('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -113,7 +114,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
 
   // Create contact
   app.post('/', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const data = contactSchema.parse(request.body);
@@ -128,7 +129,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
 
   // Update contact
   app.patch('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -151,7 +152,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
 
   // Delete contact
   app.delete('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -167,7 +168,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
 
   // Bulk delete
   app.post('/bulk-delete', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { ids } = z.object({ ids: z.array(z.string()) }).parse(request.body);
@@ -183,7 +184,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
 
   // Import from CSV
   app.post('/import', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { csv, mapping } = z.object({
@@ -230,7 +231,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
 
   // Update tags
   app.patch('/:id/tags', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -274,7 +275,7 @@ const contactRoutes: FastifyPluginAsync = async (app) => {
 
   // Unsubscribe contact
   app.post('/:id/unsubscribe', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;

@@ -1,7 +1,8 @@
 import { FastifyPluginAsync } from 'fastify';
 import { db } from '../../db/index.js';
-import { linkedinAccounts, linkedinActions, contacts, messages } from '../../db/schema.js';
+import { linkedinAccounts, contacts, messages } from '../../db/schema.js';
 import { eq, and, desc, gte, sql } from 'drizzle-orm';
+import { authenticate } from '../middleware/auth.js';
 import { z } from 'zod';
 import { encrypt, decrypt } from '../../utils/crypto.js';
 import { addLinkedinJob } from '../../queue/jobs.js';
@@ -18,7 +19,7 @@ const linkedinAccountSchema = z.object({
 const linkedinRoutes: FastifyPluginAsync = async (app) => {
   // List LinkedIn accounts
   app.get('/accounts', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     
@@ -36,7 +37,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Get single LinkedIn account
   app.get('/accounts/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -57,18 +58,15 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
     }
     
     // Get recent actions
-    const recentActions = await db.query.linkedinActions.findMany({
-      where: eq(linkedinActions.linkedinAccountId, id),
-      orderBy: [desc(linkedinActions.createdAt)],
-      limit: 20,
-    });
-    
+    // TODO: Implement linkedinActions table
+    const recentActions: any[] = [];
+
     return { ...account, recentActions };
   });
 
   // Add LinkedIn account
   app.post('/accounts', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const data = linkedinAccountSchema.parse(request.body);
@@ -95,7 +93,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Login to LinkedIn account
   app.post('/accounts/:id/login', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -170,7 +168,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Update LinkedIn account
   app.patch('/accounts/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -199,7 +197,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Delete LinkedIn account
   app.delete('/accounts/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -218,7 +216,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Send connection request
   app.post('/accounts/:id/connect', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -266,7 +264,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Send message
   app.post('/accounts/:id/message', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -313,7 +311,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Visit profile
   app.post('/accounts/:id/visit', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -345,7 +343,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Get account statistics
   app.get('/accounts/:id/stats', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -375,12 +373,8 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
     
-    const actions = await db.query.linkedinActions.findMany({
-      where: and(
-        eq(linkedinActions.linkedinAccountId, id),
-        gte(linkedinActions.createdAt, startDate)
-      ),
-    });
+    // TODO: Implement linkedinActions table
+    const actions: any[] = [];
     
     // Aggregate stats
     const stats = actions.reduce((acc, action) => {
@@ -412,7 +406,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Sync inbox (check for replies)
   app.post('/accounts/:id/sync-inbox', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -435,7 +429,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Search profiles
   app.post('/search', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { accountId, query, filters, page = 1 } = z.object({
@@ -470,7 +464,7 @@ const linkedinRoutes: FastifyPluginAsync = async (app) => {
 
   // Import profile as contact
   app.post('/import-profile', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { accountId, profileUrl } = z.object({

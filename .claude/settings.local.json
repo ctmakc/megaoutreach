@@ -3,7 +3,15 @@
     "allow": [
       "Bash(cd:*)",
       "Bash(npm install:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nComplete MegaOutreach platform setup for production deployment\n\n- Configure production server \\(31.222.235.197\\) with correct ports \\(3000/8080\\)\n- Add missing critical files \\(webhooks.ts, ThemeContext.tsx, MainLayout.tsx\\)\n- Migrate Express middleware to Fastify \\(auth.ts, analytics.ts\\)\n- Complete English localization across all UI components\n- Remove mass mailing terminology, emphasize personal outreach\n- Add comprehensive Settings pages \\(Accounts, Team, Integrations, API\\)\n- Update Docker configurations for production deployment\n- Add initial database migration schema\n- Install all required npm dependencies\n- Update documentation with production setup guide\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(npm run build:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

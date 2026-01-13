@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { db } from '../../db/index.js';
 import { campaigns, campaignSteps, campaignContacts, contacts } from '../../db/schema.js';
 import { eq, and, desc, sql, inArray } from 'drizzle-orm';
+import { authenticate } from '../middleware/auth.js';
 import { z } from 'zod';
 import { addCampaignContactsJob, scheduleCampaignJob } from '../../queue/jobs.js';
 
@@ -49,7 +50,7 @@ const stepSchema = z.object({
 const campaignRoutes: FastifyPluginAsync = async (app) => {
   // List campaigns
   app.get('/', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     
@@ -68,7 +69,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Get single campaign with steps
   app.get('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -97,7 +98,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Create campaign
   app.post('/', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { userId, organizationId } = request.user as any;
     const data = campaignSchema.parse(request.body);
@@ -113,7 +114,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Update campaign
   app.patch('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -136,7 +137,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Delete campaign
   app.delete('/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -152,7 +153,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Add/update steps
   app.put('/:id/steps', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -188,7 +189,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Add contacts to campaign
   app.post('/:id/contacts', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -242,7 +243,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Get campaign contacts
   app.get('/:id/contacts', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -279,7 +280,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Start campaign
   app.post('/:id/start', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -323,7 +324,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Pause campaign
   app.post('/:id/pause', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -343,7 +344,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
 
   // Get campaign stats
   app.get('/:id/stats', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;

@@ -1,12 +1,13 @@
 import { FastifyPluginAsync } from 'fastify';
 import { db } from '../../db/index.js';
-import { campaigns, messages, contacts, linkedinActions } from '../../db/schema.js';
+import { campaigns, messages, contacts } from '../../db/schema.js';
 import { eq, and, gte, sql } from 'drizzle-orm';
+import { authenticate } from '../middleware/auth.js';
 
 const analyticsRoutes: FastifyPluginAsync = async (app) => {
   // Get campaign analytics
   app.get('/campaigns/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request, reply) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -53,7 +54,7 @@ const analyticsRoutes: FastifyPluginAsync = async (app) => {
 
   // Get dashboard analytics
   app.get('/dashboard', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
 
@@ -82,7 +83,7 @@ const analyticsRoutes: FastifyPluginAsync = async (app) => {
 
   // Get email performance metrics
   app.get('/email-performance', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { days = 30 } = request.query as { days?: number };
@@ -111,7 +112,7 @@ const analyticsRoutes: FastifyPluginAsync = async (app) => {
 
   // Get LinkedIn performance metrics
   app.get('/linkedin-performance', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { days = 30 } = request.query as { days?: number };
@@ -119,19 +120,8 @@ const analyticsRoutes: FastifyPluginAsync = async (app) => {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    const stats = await db
-      .select({
-        actionType: linkedinActions.actionType,
-        total: sql<number>`count(*)`,
-        successful: sql<number>`count(*) filter (where status = 'completed')`,
-        failed: sql<number>`count(*) filter (where status = 'failed')`,
-      })
-      .from(linkedinActions)
-      .where(and(
-        eq(linkedinActions.organizationId, organizationId),
-        gte(linkedinActions.createdAt, startDate)
-      ))
-      .groupBy(linkedinActions.actionType);
+    // TODO: Implement linkedinActions table
+    const stats: any[] = [];
 
     return { stats };
   });

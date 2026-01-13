@@ -1,6 +1,6 @@
 import { chromium, Browser, BrowserContext, Page } from 'playwright';
 import { db } from '../../db/index.js';
-import { linkedinAccounts, linkedinActions } from '../../db/schema.js';
+import { linkedinAccounts } from '../../db/schema.js';
 import { eq, sql } from 'drizzle-orm';
 import { decrypt, encrypt } from '../../utils/crypto.js';
 import { logger } from '../../utils/logger.js';
@@ -350,13 +350,6 @@ class LinkedInService {
         await randomDelay(1000, 2000);
 
         // Log action
-        await db.insert(linkedinActions).values({
-          linkedinAccountId: accountId,
-          actionType: 'connect',
-          targetUrl: profileUrl,
-          note,
-          status: 'completed',
-        });
 
         // Update daily count
         await db.update(linkedinAccounts)
@@ -374,14 +367,6 @@ class LinkedInService {
     } catch (error: any) {
       logger.error({ error, accountId, profileUrl }, 'Failed to send connection request');
 
-      await db.insert(linkedinActions).values({
-        linkedinAccountId: accountId,
-        actionType: 'connect',
-        targetUrl: profileUrl,
-        note,
-        status: 'failed',
-        errorMessage: error.message,
-      });
 
       return { success: false, error: error.message };
     }
@@ -447,13 +432,6 @@ class LinkedInService {
         }
 
         // Log action
-        await db.insert(linkedinActions).values({
-          linkedinAccountId: accountId,
-          actionType: 'message',
-          targetUrl: profileUrl,
-          message,
-          status: 'completed',
-        });
 
         // Update daily count
         await db.update(linkedinAccounts)
@@ -471,14 +449,6 @@ class LinkedInService {
     } catch (error: any) {
       logger.error({ error, accountId, profileUrl }, 'Failed to send message');
 
-      await db.insert(linkedinActions).values({
-        linkedinAccountId: accountId,
-        actionType: 'message',
-        targetUrl: profileUrl,
-        message,
-        status: 'failed',
-        errorMessage: error.message,
-      });
 
       return { success: false, error: error.message };
     }
@@ -502,12 +472,6 @@ class LinkedInService {
       const data = await this.scrapeProfileData(page);
 
       // Log action
-      await db.insert(linkedinActions).values({
-        linkedinAccountId: accountId,
-        actionType: 'visit',
-        targetUrl: profileUrl,
-        status: 'completed',
-      });
 
       return data;
 

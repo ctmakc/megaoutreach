@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from 'fastify';
 import { db } from '../../db/index.js';
 import { emailAccounts, emailWarmupLogs } from '../../db/schema.js';
 import { eq, and, desc, gte } from 'drizzle-orm';
+import { authenticate } from '../middleware/auth.js';
 import { z } from 'zod';
 import { encrypt, decrypt } from '../../utils/crypto.js';
 import { testSmtpConnection, testImapConnection } from '../../services/email/smtp.js';
@@ -25,7 +26,7 @@ const emailAccountSchema = z.object({
 const emailRoutes: FastifyPluginAsync = async (app) => {
   // List email accounts
   app.get('/accounts', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     
@@ -43,7 +44,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
 
   // Get single email account
   app.get('/accounts/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -68,7 +69,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
 
   // Add email account
   app.post('/accounts', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const data = emailAccountSchema.parse(request.body);
@@ -128,7 +129,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
 
   // Update email account
   app.patch('/accounts/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -161,7 +162,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
 
   // Delete email account
   app.delete('/accounts/:id', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -177,7 +178,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
 
   // Test email account connection
   app.post('/accounts/:id/test', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -219,7 +220,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
 
   // Get warmup status
   app.get('/accounts/:id/warmup', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -267,7 +268,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
 
   // Send test email
   app.post('/accounts/:id/send-test', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { id } = request.params as { id: string };
     const { organizationId } = request.user as any;
@@ -303,7 +304,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
 
   // Get email sending stats
   app.get('/stats', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { period = '7d' } = request.query as any;

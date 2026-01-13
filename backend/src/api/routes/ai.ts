@@ -4,6 +4,7 @@ import { aiService } from '../../services/ai/index.js';
 import { db } from '../../db/index.js';
 import { contacts, campaigns, campaignSteps, organizations } from '../../db/schema.js';
 import { eq, and } from 'drizzle-orm';
+import { authenticate } from '../middleware/auth.js';
 
 const generateEmailSchema = z.object({
   contactId: z.string().optional(),
@@ -69,7 +70,7 @@ const improveTextSchema = z.object({
 const aiRoutes: FastifyPluginAsync = async (app) => {
   // Generate email content
   app.post('/generate/email', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const data = generateEmailSchema.parse(request.body);
@@ -113,7 +114,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Generate multiple email variants
   app.post('/generate/email/variants', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const { count = 3, ...data } = z.object({
@@ -134,7 +135,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Generate LinkedIn message
   app.post('/generate/linkedin', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const data = generateLinkedinSchema.parse(request.body);
 
@@ -145,7 +146,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Generate connection note (max 300 chars)
   app.post('/generate/linkedin/connection-note', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const data = z.object({
@@ -166,7 +167,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Analyze reply sentiment and intent
   app.post('/analyze/reply', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const data = analyzeReplySchema.parse(request.body);
 
@@ -177,7 +178,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Suggest reply to a message
   app.post('/suggest/reply', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const data = z.object({
       incomingMessage: z.string(),
@@ -203,7 +204,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Improve/rewrite text
   app.post('/improve', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const data = improveTextSchema.parse(request.body);
 
@@ -214,7 +215,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Generate subject line variants
   app.post('/generate/subjects', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const data = z.object({
       emailBody: z.string(),
@@ -236,7 +237,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Score email content
   app.post('/score/email', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const data = z.object({
       subject: z.string(),
@@ -251,7 +252,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Generate campaign sequence
   app.post('/generate/sequence', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const data = z.object({
@@ -310,7 +311,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Personalize template for contact
   app.post('/personalize', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const { organizationId } = request.user as any;
     const data = z.object({
@@ -349,7 +350,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Extract company/contact info from website
   app.post('/extract/website', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const data = z.object({
       url: z.string().url(),
@@ -362,7 +363,7 @@ const aiRoutes: FastifyPluginAsync = async (app) => {
 
   // Research company
   app.post('/research/company', {
-    preHandler: [app.authenticate],
+    preHandler: [authenticate],
   }, async (request) => {
     const data = z.object({
       companyName: z.string(),
