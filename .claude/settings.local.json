@@ -11,7 +11,8 @@
       "Bash(git commit:*)",
       "Bash(find:*)",
       "Bash(npx tsc:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(timeout 5 npx tsx:*)"
     ]
   }
 }

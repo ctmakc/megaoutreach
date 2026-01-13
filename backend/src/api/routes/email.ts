@@ -6,7 +6,7 @@ import { authenticate } from '../middleware/auth.js';
 import { z } from 'zod';
 import { encrypt, decrypt } from '../../utils/crypto.js';
 import { testSmtpConnection, testImapConnection } from '../../services/email/smtp.js';
-import { addWarmupJob } from '../../queue/jobs.js';
+// import { addWarmupJob } from "../../queue/jobs.js"; // TODO: implement
 
 const emailAccountSchema = z.object({
   email: z.string().email(),
@@ -117,7 +117,7 @@ const emailRoutes: FastifyPluginAsync = async (app) => {
     }).returning();
     
     // Start warmup process
-    await addWarmupJob(account.id);
+    // await addWarmupJob(account.id); // TODO: implement warmup
     
     return {
       id: account.id,

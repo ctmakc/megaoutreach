@@ -4,7 +4,7 @@ import { campaigns, campaignSteps, campaignContacts, contacts } from '../../db/s
 import { eq, and, desc, sql, inArray } from 'drizzle-orm';
 import { authenticate } from '../middleware/auth.js';
 import { z } from 'zod';
-import { addCampaignContactsJob, scheduleCampaignJob } from '../../queue/jobs.js';
+import { addCampaignContactsJob, addCampaignJob } from '../../queue/jobs.js';
 
 const campaignSchema = z.object({
   name: z.string().min(1).max(255),
@@ -317,7 +317,7 @@ const campaignRoutes: FastifyPluginAsync = async (app) => {
       .where(eq(campaigns.id, id));
     
     // Schedule campaign processing
-    await scheduleCampaignJob(id);
+    await addCampaignJob({ campaignId: id });
     
     return { success: true, message: 'Campaign started' };
   });

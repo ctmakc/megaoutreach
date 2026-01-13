@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
 export const rateLimiter = (options: { windowMs: number; max: number }) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return async (request: FastifyRequest, reply: FastifyReply) => {
     // TODO: Implement rate limiting using Redis
-    next();
+    // For now, just pass through
   };
 };
 

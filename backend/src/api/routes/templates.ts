@@ -72,11 +72,17 @@ const templateRoutes: FastifyPluginAsync = async (app) => {
     
     // Extract variables from body
     const variableMatches = data.body.match(/\{\{(\w+)\}\}/g) || [];
-    const variables = [...new Set(variableMatches.map((v) => v.replace(/\{\{|\}\}/g, '')))];
-    
+    const extractedVariables = [...new Set(variableMatches.map((v) => v.replace(/\{\{|\}\}/g, '')))];
+
     const [template] = await db.insert(templates).values({
-      ...data,
-      variables,
+      name: data.name,
+      description: data.description,
+      channel: data.channel,
+      category: data.category,
+      subject: data.subject,
+      body: data.body,
+      variables: extractedVariables,
+      isPublic: data.isPublic,
       organizationId,
       createdById: userId,
     }).returning();
@@ -93,14 +99,14 @@ const templateRoutes: FastifyPluginAsync = async (app) => {
     const data = templateSchema.partial().parse(request.body);
     
     // Re-extract variables if body changed
-    let variables;
+    const updateData: any = { ...data, updatedAt: new Date() };
     if (data.body) {
       const variableMatches = data.body.match(/\{\{(\w+)\}\}/g) || [];
-      variables = [...new Set(variableMatches.map((v) => v.replace(/\{\{|\}\}/g, '')))];
+      updateData.variables = [...new Set(variableMatches.map((v: string) => v.replace(/\{\{|\}\}/g, '')))];
     }
-    
+
     const [updated] = await db.update(templates)
-      .set({ ...data, variables, updatedAt: new Date() })
+      .set(updateData)
       .where(and(
         eq(templates.id, id),
         eq(templates.organizationId, organizationId)
