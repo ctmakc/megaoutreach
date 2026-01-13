@@ -4,7 +4,7 @@ import { campaigns, campaignSteps, campaignContacts, contacts } from '../../db/s
 import { eq, and, desc, sql, inArray } from 'drizzle-orm';
 import { authenticate } from '../middleware/auth.js';
 import { z } from 'zod';
-import { addCampaignContactsJob, addCampaignJob } from '../../queue/jobs.js';
+import { addCampaignJob } from '../../queue/jobs.js';
 
 const campaignSchema = z.object({
   name: z.string().min(1).max(255),
