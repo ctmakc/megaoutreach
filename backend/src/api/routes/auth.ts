@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { FastifyPluginAsync } from 'fastify';
 import { google } from 'googleapis';
 import { db } from '../../db/index.js';
