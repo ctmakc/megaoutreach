@@ -61,21 +61,36 @@ services:
       timeout: 10s
       retries: 3
 
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    container_name: megaoutreach-worker
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    depends_on:
+      - postgres
+      - redis
+
   frontend:
     build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      target: development
+      context: .
+      dockerfile: docker/Dockerfile.frontend
     container_name: megaoutreach-frontend
     restart: unless-stopped
     environment:
-      - VITE_API_URL=http://31.222.235.197:8080/api
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8080/api}
     ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: npm run dev -- --host 0.0.0.0
+      - "3000:80"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:

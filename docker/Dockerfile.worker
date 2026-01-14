@@ -14,8 +14,5 @@ RUN npm ci
 # Copy source code
 COPY backend/ ./
 
-# Build TypeScript
-RUN npm run build
-
-# Start worker
-CMD ["npm", "run", "worker:start"]
+# Start worker using tsx directly (no build needed)
+CMD ["npx", "tsx", "src/queue/worker.ts"]
