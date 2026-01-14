@@ -4,6 +4,7 @@ import { google } from 'googleapis';
 import { db } from '../../db/index.js';
 import { users, organizations } from '../../db/schema.js';
 import { eq } from 'drizzle-orm';
+import { authenticate } from '../middleware/auth.js';
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -122,7 +123,7 @@ const authRoutes: FastifyPluginAsync = async (fastify) => {
 
   // Get current user
   fastify.get('/me', {
-    onRequest: [fastify.authenticate],
+    preHandler: [authenticate],
   }, async (request, reply) => {
     const userId = request.user.userId;
 
