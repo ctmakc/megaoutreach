@@ -26,7 +26,7 @@ const app = Fastify({
 
 // Plugins
 await app.register(cors, {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || true, // true allows all origins in dev
   credentials: true,
 });
 
@@ -123,7 +123,7 @@ signals.forEach((signal) => {
 // Start
 const start = async () => {
   try {
-    const port = parseInt(process.env.PORT || '3000', 10);
+    const port = parseInt(process.env.PORT || '8080', 10);
     const host = process.env.HOST || '0.0.0.0';
 
     await app.listen({ port, host });

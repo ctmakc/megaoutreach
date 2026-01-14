@@ -12,7 +12,9 @@
       "Bash(find:*)",
       "Bash(npx tsc:*)",
       "Bash(git checkout:*)",
-      "Bash(timeout 5 npx tsx:*)"
+      "Bash(timeout 5 npx tsx:*)",
+      "Bash(timeout 3 npx tsx:*)",
+      "Bash(git restore:*)"
     ]
   }
 }
