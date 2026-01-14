@@ -28,7 +28,13 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      await register(formData.name, formData.email, formData.password);
+      await register({
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.name.split(' ')[0],
+        lastName: formData.name.split(' ').slice(1).join(' ') || undefined,
+        organizationName: formData.company || 'My Organization',
+      });
       toast.success('Аккаунт создан!');
       navigate('/dashboard');
     } catch (error) {
